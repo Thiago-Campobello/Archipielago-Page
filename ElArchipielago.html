@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archipiélago — Sitio Oficial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Share+Tech+Mono&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #04080d;
+            --panel-bg: rgba(8, 18, 28, 0.75);
+            --border-color: rgba(85, 217, 255, 0.25);
+            --accent-cyan: #55d9ff;
+            --accent-blue: #0077ff;
+            --accent-alert: #ff4757;
+            --text-primary: #f0f8ff;
+            --text-secondary: #8da8b1;
+            --text-muted: #527380;
+            --font-title: 'Orbitron', sans-serif;
+            --font-mono: 'Share Tech Mono', monospace;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* FONDO ESPACIAL INTERACTIVO CON CANVAS */
+        #space-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ENCABEZADO Y NAVEGACIÓN */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(4, 8, 13, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-title);
+            font-weight: 900;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(85, 217, 255, 0.5);
+        }
+
+        .logo-icon::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent-cyan);
+            text-shadow: 0 0 8px rgba(85, 217, 255, 0.6);
+        }
+
+        /* CONTAINER GENERAL */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* SECCIÓN HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 100px;
+            gap: 40px;
+        }
+
+        .hero-content {
+            flex: 1;
+            max-width: 650px;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            color: var(--accent-cyan);
+            background: rgba(85, 217, 255, 0.1);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-title);
+            font-size: 3.8rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 35px;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.95rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 20px rgba(85, 217, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: #ffffff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(85, 217, 255, 0.05);
+        }
+
+        /* SECCIONES COMUNES */
+        .section {
+            padding: 100px 0;
+            border-bottom: 1px solid rgba(85, 217, 255, 0.1);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title p {
+            font-family: var(--font-mono);
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .section-title h2 {
+            font-family: var(--font-title);
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        /* TARJETA OBJETIVO DEL JUEGO */
+        .goal-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-cyan);
+            padding: 40px;
+            border-radius: 8px;
+            margin-bottom: 60px;
+            backdrop-filter: blur(10px);
+        }
+
+        .goal-card h3 {
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent-cyan);
+        }
+
+        .goal-card p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        /* GRID TÉCNICO COMPLETO */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .tech-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 8px;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .tech-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .tech-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .tech-card h4 {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .tech-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            background: rgba(85, 217, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 3px;
+        }
+
+        .tech-value {
+            font-family: var(--font-title);
+            font-size: 1.2rem;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .tech-card p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        /* EQUIPO DE DESARROLLO */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .team-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px 20px;
+            border-radius: 8px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+            transition: 0.3s;
+        }
+
+        .team-card:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(85, 217, 255, 0.2);
+        }
+
+        .team-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(85, 217, 255, 0.1);
+            border: 2px solid var(--accent-cyan);
+            margin: 0 auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-title);
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-size: 1.2rem;
+        }
+
+        .team-card h3 {
+            font-family: var(--font-title);
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .team-card p {
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* FORMULARIO DE OPINIÓN */
+        .opinion-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 8px;
+            max-width: 700px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .opinion-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .form-group label {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            background: rgba(4, 8, 13, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px 15px;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(85, 217, 255, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* SECCIÓN DESCARGA Y GODOT ALERT */
+        .download-box {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 50px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .godot-alert {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid var(--accent-alert);
+            color: #ff8e97;
+            padding: 18px 25px;
+            border-radius: 6px;
+            margin: 25px 0 35px 0;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .godot-alert strong {
+            color: #ffffff;
+        }
+
+        /* DOCUMENTACIÓN Y RECURSOS */
+        .docs-section {
+            background: rgba(4, 8, 13, 0.95);
+            padding: 60px 0;
+        }
+
+        .docs-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            list-style: none;
+        }
+
+        .docs-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .docs-link:hover {
+            background: rgba(85, 217, 255, 0.1);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 120px;
+            }
+            .hero h1 { font-size: 2.5rem; }
+            .hero-buttons { justify-content: center; }
+            nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CANVAS ESPACIAL CON SATÉLITES -->
+    <canvas id="space-canvas"></canvas>
+
+    <!-- HEADER / NAVEGACIÓN -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span>ARCHIPIÉLAGO</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#objetivo">Objetivo</a></li>
+                <li><a href="#tecnico">Datos Técnicos</a></li>
+                <li><a href="#equipo">Equipo</a></li>
+                <li><a href="#opinion">Opinión</a></li>
+                <li><a href="#descargar">Descarga</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="hero-content">
+                <span class="hero-tag">PROYECTO VIDEOJUEGO 3D</span>
+                <h1>SOBREVIVE AL APAGÓN DEL ARCHIPIÉLAGO</h1>
+                <p>
+                    Una experiencia de aventura, exploración y disparos en 3D desarrollada sobre Godot Engine.
+                    Adéntrate en una isla aislada del mundo y descubre los secretos que ocultan sus instalaciones.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#descargar" class="btn btn-primary">Descargar Alpha</a>
+                    <a href="#tecnico" class="btn btn-secondary">Ver Datos Técnicos</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- OBJETIVO DEL JUEGO -->
+        <section id="objetivo" class="section">
+            <div class="section-title">
+                <p>NARRATIVA Y JUGABILIDAD</p>
+                <h2>OBJETIVO DEL JUEGO</h2>
+            </div>
+            <div class="goal-card">
+                <h3>Exploración, Combate y Progreso</h3>
+                <p>
+                    El objetivo principal del jugador es explorar las diversas zonas del archipiélago para comprender el origen de la crisis y restablecer los sistemas de comunicación. A lo largo de la aventura deberás conseguir recursos de supervivencia, administrar estratégicamente tu inventario, defenderte de enemigos con armas de fuego o cuerpo a cuerpo en primera o tercera persona, e interactuar con el entorno para avanzar en la narrativa.
+                </p>
+            </div>
+        </section>
+
+        <!-- DATOS TÉCNICOS Y ESPECIFICACIONES DE DESARROLLO -->
+        <section id="tecnico" class="section">
+            <div class="section-title">
+                <p>ESPECIFICACIONES DE DESARROLLO</p>
+                <h2>DATOS TÉCNICOS</h2>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <h4>Motor de Juego</h4>
+                        <span class="tech-badge">Godot 4.7</span>
+                    </div>
+                    <div class="tech-value">Godot Engine 4</div>
+                    <p>Desarrollado en GDScript estructurado mediante nodos nativos. Utiliza <code>CharacterBody3D</code> para el controlador de movimiento del jugador y físicas personalizadas de gravedad.</p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <h4>Diseño y Modelado 3D</h4>
+                        <span class="tech-badge">Blender</span>
+                    </div>
+                    <div class="tech-value">Blender de Modelado 3D</div>
+                    <p>Uso de <strong>Blender</strong> para el diseño de escenarios, estructuras (torre), montañas, puentes y para el modelado de ítems, armas (Pistola, Subfusil, Daga, Puños, Botiquín, Granada) y Personajes/NPCs.</p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <h4>Perspectiva Dinámica</h4>
+                        <span class="tech-badge">1ª & 3ª Persona</span>
+                    </div>
+                    <div class="tech-value">Alternancia de Cámara (F5)</div>
+                    <p>Permite alternar en tiempo real entre primera y tercera persona. Incluye restricción en el eje Y (Pitch clamp), apuntado preciso (ADS) con interpolación de FOV y retícula con bloom.</p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <h4>Sistema de Combate</h4>
+                        <span class="tech-badge">RayCast3D</span>
+                    </div>
+                    <div class="tech-value">Detección de Daño por Zonas</div>
+                    <p>Detección de impactos con <code>RayCast3D</code> alineado al centro de la cámara. Implementa múltiples <code>Area3D</code> en enemigos para diferenciar daño en cuerpo o cabeza (multiplicador crítico), retroceso (recoil) y disparos automáticos.</p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <h4>Generación de Terreno</h4>
+                        <span class="tech-badge">Terrain3D</span>
+                    </div>
+                    <div class="tech-value">Escenario y Shaders de Agua</div>
+                    <p>Integración del plugin Terrain3D en Godot para escultura eficiente y texturizado del mapa de la isla. Malla de agua personalizada con propiedades de transparencia, iluminación solar natural y ambiente global.</p>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <h4>Gestión de Inventario</h4>
+                        <span class="tech-badge">HUD Adaptativo</span>
+                    </div>
+                    <div class="tech-value">Inventario & Interacción</div>
+                    <p>Estructura de almacenamiento de ítems con recogida/descarte en el escenario. HUD dinámico que se oculta automáticamente al equipar consumibles o armas melee (daga, botiquín, puños).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- EQUIPO DE DESARROLLO -->
+        <section id="equipo" class="section">
+            <div class="section-title">
+                <p>CRÉDITOS DEL PROYECTO</p>
+                <h2>EQUIPO DE DESARROLLO</h2>
+            </div>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar">TC</div>
+                    <h3>Thiago Campobello</h3>
+                    <p>Programación Core, Controlador, Sistemas de Combate, Movimiento y Terreno</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar">PM</div>
+                    <h3>Pía Machado</h3>
+                    <p>Modelado 3D (Blender), Arte de Escenario y Assets</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar">JE</div>
+                    <h3>Joaquín Espinar</h3>
+                    <p>Narrativa, Diseño de Personajes 3D (Blender), Logotipo, Carpeta de campo e Informe Técnico</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar">CO</div>
+                    <h3>Carolina Occhiato</h3>
+                    <p>Sistema de Inventario, Interacción de Objetos y Lógica de Enemigos</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORMULARIO DE OPINIÓN -->
+        <section id="opinion" class="section">
+            <div class="section-title">
+                <p>RETROALIMENTACIÓN</p>
+                <h2>DEJANOS TU OPINIÓN</h2>
+            </div>
+            <div class="opinion-card">
+                <form id="opinion-form" class="opinion-form" action="https://formsubmit.co/elarchipielago30@gmail.com" method="POST">
+                    <!-- Configuración adicional de FormSubmit -->
+                    <input type="hidden" name="_subject" value="Nueva opinión enviada sobre Archipiélago">
+                    <input type="hidden" name="_captcha" value="false">
+
+                    <div class="form-group">
+                        <label for="nombre">Nombre o Nickname</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre o alias..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mensaje">Tu Opinión / Comentarios</label>
+                        <textarea id="mensaje" name="mensaje" placeholder="Escribe aquí tus comentarios, sugerencias o reporte de errores..." required></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="btn btn-primary" style="justify-content: center; width: 100%;">Enviar Opinión</button>
+                </form>
+
+                <!-- MENSAJE DE CONFIRMACIÓN DINÁMICO -->
+                <div id="status-message" style="display: none; margin-top: 20px; padding: 15px; border-radius: 4px; text-align: center; font-family: var(--font-mono); font-size: 0.95rem;"></div>
+            </div>
+        </section>
+
+        <!-- DESCARGA DEL JUEGO -->
+        <section id="descargar" class="section">
+            <div class="download-box">
+                <h2 style="font-family: var(--font-title); font-size: 2rem; margin-bottom: 15px;">OBTENER LA VERSIÓN ALPHA</h2>
+                <p style="color: var(--text-secondary);">Descarga directa del código fuente y proyecto ejecutable desde GitHub.</p>
+
+                <div class="godot-alert">
+                    <span style="font-size: 1.5rem;">⚠️</span>
+                    <div>
+                        <strong>REQUISITO FUNDAMENTAL PARA JUGAR:</strong><br>
+                        Este proyecto está desarrollado para ejecutarse a través de <strong>Godot Engine 4.7</strong>. Es necesario tener instalado Godot 4.7 para abrir y ejecutar la escena principal del juego.
+                    </div>
+                </div>
+
+                <a href="https://github.com/Thiago-Campobello/El-Archipielago/archive/refs/heads/Alpha.zip" class="btn btn-primary" style="font-size: 1.1rem; padding: 16px 36px;">
+                    ⬇️ Descargar Alpha.zip (GitHub)
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- FUENTES Y DOCUMENTACIÓN USADA -->
+    <section class="docs-section">
+        <div class="container">
+            <div class="section-title" style="margin-bottom: 30px;">
+                <p>DOCUMENTACIÓN Y FUENTES DE APRENDIZAJE</p>
+                <h3 style="font-family: var(--font-title); font-size: 1.3rem;">RECURSOS UTILIZADOS EN EL DESARROLLO</h3>
+            </div>
+            <ul class="docs-list">
+                <li>
+                    <a href="https://docs.godotengine.org/es/4.7/getting_started/step_by_step/index.html" target="_blank" rel="noopener" class="docs-link">
+                        📄 Documentación de Godot Engine 4.7
+                    </a>
+                </li>
+                <li>
+                    <a href="https://docs.blender.org/manual/es/latest/" target="_blank" rel="noopener" class="docs-link">
+                        🎨 Manual Oficial de Blender
+                    </a>
+                </li>
+                <li>
+                    <a href="https://developer.mozilla.org/es/docs/Learn_web_development/Core/Structuring_content/Basic_HTML_syntax" target="_blank" rel="noopener" class="docs-link">
+                        🌐 MDN Web Docs — HTML
+                    </a>
+                </li>
+                <li>
+                    <a href="https://developer.mozilla.org/es/docs/Learn_web_development/Getting_started/Your_first_website/Styling_the_content" target="_blank" rel="noopener" class="docs-link">
+                        🎨 MDN Web Docs — CSS
+                    </a>
+                </li>
+                <li>
+                    <a href="https://developer.mozilla.org/es/docs/Web/JavaScript/Guide" target="_blank" rel="noopener" class="docs-link">
+                        ⚡ MDN Web Docs — JavaScript
+                    </a>
+                </li>
+                <li>
+                    <a href="https://canva.link/1e7ic91934g9wmv" target="_blank" rel="noopener" class="docs-link">
+                        📊 Infografía del Proyecto (Canva)
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Archipiélago — Desarrollado por Thiago Campobello, Pía Machado, Joaquín Espinar & Carolina Occhiato.</p>
+    </footer>
+
+    <!-- JS: LÓGICA DEL FORMULARIO Y CANVAS ESPACIAL -->
+    <script>
+        // MANEJO DEL ENVÍO DE OPINIÓN VÍA FETCH (SIN CAMBIO DE PÁGINA)
+        const form = document.getElementById('opinion-form');
+        const statusMsg = document.getElementById('status-message');
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            submitBtn.innerText = "Enviando...";
+            submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    statusMsg.style.display = 'block';
+                    statusMsg.style.background = 'rgba(85, 217, 255, 0.15)';
+                    statusMsg.style.border = '1px solid var(--accent-cyan)';
+                    statusMsg.style.color = 'var(--accent-cyan)';
+                    statusMsg.innerText = '¡Tu opinión se ha enviado correctamente! Muchas gracias.✅';
+                    
+                    form.reset();
+                } else {
+                    throw new Error('Error en el envío');
+                }
+            })
+            .catch(error => {
+                statusMsg.style.display = 'block';
+                statusMsg.style.background = 'rgba(255, 71, 87, 0.15)';
+                statusMsg.style.border = '1px solid var(--accent-alert)';
+                statusMsg.style.color = '#ff8e97';
+                statusMsg.innerText = 'Ocurrió un error al enviar tu opinión. Inténtalo de nuevo.';
+            })
+            .finally(() => {
+                submitBtn.innerText = "Enviar Opinión";
+                submitBtn.disabled = false;
+            });
+        });
+
+        // CANVAS DE ESTRELLAS Y SATÉLITES
+        const canvas = document.getElementById('space-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let stars = [];
+        let satellites = [];
+
+        function initCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            
+            stars = [];
+            const numStars = Math.floor((width * height) / 3000);
+            for (let i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.02 + 0.005
+                });
+            }
+
+            satellites = [];
+            const numSatellites = 3;
+            for (let i = 0; i < numSatellites; i++) {
+                satellites.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    dx: (Math.random() - 0.5) * 0.8,
+                    dy: (Math.random() - 0.5) * 0.8,
+                    size: Math.random() * 2 + 2
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            stars.forEach(star => {
+                star.alpha += star.speed;
+                if (star.alpha > 1 || star.alpha < 0) {
+                    star.speed = -star.speed;
+                }
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(85, 217, 255, ${Math.abs(star.alpha)})`;
+                ctx.fill();
+            });
+
+            satellites.forEach(sat => {
+                sat.x += sat.dx;
+                sat.y += sat.dy;
+
+                if (sat.x < 0) sat.x = width;
+                if (sat.x > width) sat.x = 0;
+                if (sat.y < 0) sat.y = height;
+                if (sat.y > height) sat.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(sat.x, sat.y, sat.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#55d9ff';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#55d9ff';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        draw();
+    </script>
+</body>
+</html>
