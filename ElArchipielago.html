@@ -75,23 +75,20 @@
             text-transform: uppercase;
         }
 
-        .logo-icon {
-            width: 28px;
-            height: 28px;
-            border: 2px solid var(--accent-cyan);
+        /* NUEVO ESTILO DEL LOGO IMAGEN */
+        .logo-img {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            object-fit: cover;
+            border: 2px solid var(--accent-cyan);
             box-shadow: 0 0 10px rgba(85, 217, 255, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .logo-icon::after {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--accent-cyan);
-            border-radius: 50%;
+        .logo-img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(85, 217, 255, 0.8);
         }
 
         nav ul {
@@ -528,7 +525,8 @@
     <!-- HEADER / NAVEGACIÓN -->
     <header>
         <div class="logo">
-            <div class="logo-icon"></div>
+            <!-- AQUÍ SE INTEGRÓ EL NUEVO LOGO -->
+            <img src="WhatsApp Image 2026-10-07 at 22.46.20.jpeg" alt="Logo Archipiélago" class="logo-img">
             <span>ARCHIPIÉLAGO</span>
         </div>
         <nav>
@@ -584,7 +582,7 @@
                 <div class="tech-card">
                     <div class="tech-card-header">
                         <h4>Motor de Juego</h4>
-                        <span class="tech-badge">Godot 4.7</span>
+                        <span class="tech-badge">Godot 4.x</span>
                     </div>
                     <div class="tech-value">Godot Engine 4</div>
                     <p>Desarrollado en GDScript estructurado mediante nodos nativos. Utiliza <code>CharacterBody3D</code> para el controlador de movimiento del jugador y físicas personalizadas de gravedad.</p>
@@ -647,7 +645,7 @@
                 <div class="team-card">
                     <div class="team-avatar">TC</div>
                     <h3>Thiago Campobello</h3>
-                    <p>Programación Core, Controlador, Sistemas de Combate, Movimiento y Terreno</p>
+                    <p>Programación Core, Controlador, Sistemas de Combate y Terreno</p>
                 </div>
                 <div class="team-card">
                     <div class="team-avatar">PM</div>
@@ -657,7 +655,7 @@
                 <div class="team-card">
                     <div class="team-avatar">JE</div>
                     <h3>Joaquín Espinar</h3>
-                    <p>Narrativa, Diseño de Personajes 3D (Blender), Logotipo, Carpeta de campo e Informe Técnico</p>
+                    <p>Narrativa, Diseño de Personajes 3D (Blender), Logotipo e Informe Técnico</p>
                 </div>
                 <div class="team-card">
                     <div class="team-avatar">CO</div>
@@ -797,7 +795,7 @@
                     statusMsg.style.background = 'rgba(85, 217, 255, 0.15)';
                     statusMsg.style.border = '1px solid var(--accent-cyan)';
                     statusMsg.style.color = 'var(--accent-cyan)';
-                    statusMsg.innerText = '¡Tu opinión se ha enviado correctamente! Muchas gracias.✅';
+                    statusMsg.innerText = '¡Tu opinión se ha enviado correctamente! Muchas gracias.';
                     
                     form.reset();
                 } else {
